@@ -7,18 +7,29 @@ const OVERPASS_ENDPOINTS = [
 ];
 
 /**
- * Query Overpass API for gas stations within bounds
+ * Query Overpass API for gas stations (and optionally supermarkets) within bounds
  * @param {{south: number, west: number, north: number, east: number}} bounds
- * @returns {Promise<Array>} Array of gas station objects
+ * @param {boolean} includeSupermarkets - Whether to include supermarkets
+ * @returns {Promise<Array>} Array of station objects
  */
-export async function queryGasStations(bounds) {
+export async function queryGasStations(bounds, includeSupermarkets = false) {
   const { south, west, north, east } = bounds;
 
-  const query = `
+  let query = `
     [out:json][timeout:60];
     (
       node["amenity"="fuel"](${south},${west},${north},${east});
-      way["amenity"="fuel"](${south},${west},${north},${east});
+      way["amenity"="fuel"](${south},${west},${north},${east});`;
+
+  if (includeSupermarkets) {
+    query += `
+      node["shop"="supermarket"](${south},${west},${north},${east});
+      way["shop"="supermarket"](${south},${west},${north},${east});
+      node["shop"="convenience"](${south},${west},${north},${east});
+      way["shop"="convenience"](${south},${west},${north},${east});`;
+  }
+
+  query += `
     );
     out center;
   `;
@@ -72,12 +83,17 @@ function parseOverpassResponse(data) {
 
     const tags = element.tags || {};
 
+    const isSupermarket = tags.shop === 'supermarket' || tags.shop === 'convenience';
+    const category = isSupermarket ? 'supermarket' : 'fuel';
+    const defaultName = isSupermarket ? 'Unnamed Supermarket' : 'Unnamed Gas Station';
+
     stations.push({
       id: element.id,
       lat,
       lon,
-      name: tags.name || 'Unnamed Gas Station',
+      name: tags.name || defaultName,
       brand: tags.brand || '',
+      category,
       openingHours: tags.opening_hours || 'Unknown',
       hasShop:
         (tags.shop && tags.shop !== 'no') ||

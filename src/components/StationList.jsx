@@ -96,6 +96,8 @@ export default function StationList({
   onStationSelect,
   maxDetour,
   onMaxDetourChange,
+  bikepackingMode,
+  onBikepackingModeChange,
   routeName,
 }) {
   const gaps = useMemo(() => {
@@ -146,6 +148,15 @@ export default function StationList({
               </select>
             </label>
           </div>
+
+          <label className="bikepacking-mode">
+            <input
+              type="checkbox"
+              checked={bikepackingMode}
+              onChange={(e) => onBikepackingModeChange(e.target.checked)}
+            />
+            Bikepacking mode
+          </label>
 
           <button
             className="export-btn"

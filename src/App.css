@@ -335,6 +335,18 @@ body {
   font-size: 0.9rem;
 }
 
+.bikepacking-mode {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.bikepacking-mode input {
+  cursor: pointer;
+}
+
 .export-btn {
   padding: 0.5rem 1rem;
   background: #27ae60;

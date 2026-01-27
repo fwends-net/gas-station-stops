@@ -53,6 +53,55 @@ const selectedGasStationIcon = new L.DivIcon({
   iconAnchor: [18, 18],
 });
 
+// Supermarket icon
+const supermarketIcon = new L.DivIcon({
+  className: 'supermarket-marker',
+  html: `<div style="
+    background: #f39c12;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    border: 2px solid white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  ">🛒</div>`,
+  iconSize: [28, 28],
+  iconAnchor: [14, 14],
+});
+
+// Selected supermarket icon
+const selectedSupermarketIcon = new L.DivIcon({
+  className: 'supermarket-marker-selected',
+  html: `<div style="
+    background: #27ae60;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    border: 3px solid white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  ">🛒</div>`,
+  iconSize: [36, 36],
+  iconAnchor: [18, 18],
+});
+
+function getStationIcon(station, isSelected) {
+  if (station.category === 'supermarket') {
+    return isSelected ? selectedSupermarketIcon : supermarketIcon;
+  }
+  return isSelected ? selectedGasStationIcon : gasStationIcon;
+}
+
 // Component to fit map bounds to route
 function FitBounds({ points }) {
   const map = useMap();
@@ -99,11 +148,7 @@ export default function Map({ routePoints, stations, selectedStation, onStationS
           <Marker
             key={station.id}
             position={[station.lat, station.lon]}
-            icon={
-              selectedStation?.id === station.id
-                ? selectedGasStationIcon
-                : gasStationIcon
-            }
+            icon={getStationIcon(station, selectedStation?.id === station.id)}
             eventHandlers={{
               click: () => onStationSelect(station),
             }}

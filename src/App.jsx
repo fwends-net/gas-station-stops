@@ -15,6 +15,8 @@ function App() {
   const [selectedStation, setSelectedStation] = useState(null);
   const [maxDetour, setMaxDetour] = useState(1);
   const [queriedDetour, setQueriedDetour] = useState(0);
+  const [bikepackingMode, setBikepackingMode] = useState(false);
+  const [queriedBikepackingMode, setQueriedBikepackingMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showAbout, setShowAbout] = useState(false);
@@ -32,9 +34,10 @@ function App() {
 
       // Get bounds and query for gas stations
       const bounds = getRouteBounds(points, maxDetour + 0.5);
-      const stations = await queryGasStations(bounds);
+      const stations = await queryGasStations(bounds, bikepackingMode);
       setAllStations(stations);
       setQueriedDetour(maxDetour);
+      setQueriedBikepackingMode(bikepackingMode);
 
       // Filter stations along route
       const filtered = filterStationsAlongRoute(stations, points, maxDetour);
@@ -45,7 +48,7 @@ function App() {
     } finally {
       setIsLoading(false);
     }
-  }, [maxDetour]);
+  }, [maxDetour, bikepackingMode]);
 
   const handleMaxDetourChange = useCallback(async (newMaxDetour) => {
     setMaxDetour(newMaxDetour);
@@ -56,9 +59,10 @@ function App() {
       setIsLoading(true);
       try {
         const bounds = getRouteBounds(routePoints, newMaxDetour + 0.5);
-        const stations = await queryGasStations(bounds);
+        const stations = await queryGasStations(bounds, bikepackingMode);
         setAllStations(stations);
         setQueriedDetour(newMaxDetour);
+        setQueriedBikepackingMode(bikepackingMode);
         const filtered = filterStationsAlongRoute(stations, routePoints, newMaxDetour);
         setFilteredStations(filtered);
       } catch (err) {
@@ -71,7 +75,38 @@ function App() {
       const filtered = filterStationsAlongRoute(allStations, routePoints, newMaxDetour);
       setFilteredStations(filtered);
     }
-  }, [allStations, routePoints, queriedDetour]);
+  }, [allStations, routePoints, queriedDetour, bikepackingMode]);
+
+  const handleBikepackingModeChange = useCallback(async (enabled) => {
+    setBikepackingMode(enabled);
+    if (!routePoints) return;
+
+    // If enabling and we haven't queried with supermarkets yet, re-query
+    if (enabled && !queriedBikepackingMode) {
+      setIsLoading(true);
+      try {
+        const bounds = getRouteBounds(routePoints, maxDetour + 0.5);
+        const stations = await queryGasStations(bounds, true);
+        setAllStations(stations);
+        setQueriedBikepackingMode(true);
+        const filtered = filterStationsAlongRoute(stations, routePoints, maxDetour);
+        setFilteredStations(filtered);
+      } catch (err) {
+        console.error('Error fetching stations:', err);
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    } else if (allStations) {
+      // Filter existing stations based on mode
+      let stationsToFilter = allStations;
+      if (!enabled) {
+        stationsToFilter = allStations.filter(s => s.category === 'fuel');
+      }
+      const filtered = filterStationsAlongRoute(stationsToFilter, routePoints, maxDetour);
+      setFilteredStations(filtered);
+    }
+  }, [allStations, routePoints, maxDetour, queriedBikepackingMode]);
 
   const handleStationSelect = useCallback((station) => {
     setSelectedStation(station);
@@ -120,6 +155,7 @@ function App() {
                   setFilteredStations(null);
                   setSelectedStation(null);
                   setQueriedDetour(0);
+                  setQueriedBikepackingMode(false);
                 }}
               >
                 Load New Route
@@ -131,6 +167,8 @@ function App() {
                 onStationSelect={handleStationSelect}
                 maxDetour={maxDetour}
                 onMaxDetourChange={handleMaxDetourChange}
+                bikepackingMode={bikepackingMode}
+                onBikepackingModeChange={handleBikepackingModeChange}
                 routeName={routeName}
               />
             </>
