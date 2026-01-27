@@ -19,7 +19,7 @@ export default function About({ onClose }) {
           <h3>How it works</h3>
           <ul>
             <li>Your GPX file is parsed entirely in your browser - no data is uploaded to our servers</li>
-            <li>Gas station data comes from <a href="https://www.openstreetmap.org" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> via the Overpass API</li>
+            <li>Gas station and supermarket data comes from <a href="https://www.openstreetmap.org" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> via the Overpass API</li>
             <li>Distances are calculated using the Haversine formula for accuracy</li>
             <li>Gap warnings alert you to stretches over 15km without fuel stops</li>
             <li>Enable "Bikepacking mode" to also show supermarkets and convenience stores along your route</li>
