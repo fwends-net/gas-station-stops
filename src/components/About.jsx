@@ -22,6 +22,7 @@ export default function About({ onClose }) {
             <li>Gas station data comes from <a href="https://www.openstreetmap.org" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> via the Overpass API</li>
             <li>Distances are calculated using the Haversine formula for accuracy</li>
             <li>Gap warnings alert you to stretches over 15km without fuel stops</li>
+            <li>Enable "Bikepacking mode" to also show supermarkets and convenience stores along your route</li>
           </ul>
         </section>
 
@@ -75,8 +76,8 @@ export default function About({ onClose }) {
         <section>
           <h3>Disclaimer</h3>
           <p>
-            Gas station data is sourced from OpenStreetMap and may be incomplete or outdated.
-            Always verify fuel stop availability before your ride, especially in remote areas.
+            Gas station and supermarket data is sourced from OpenStreetMap and may be incomplete or outdated.
+            Always verify fuel stop and store availability before your ride, especially in remote areas.
             This tool is provided as-is without warranty.
           </p>
         </section>
@@ -88,7 +89,10 @@ export default function About({ onClose }) {
         </p>
       </section>
       <section>
-        <h3>Contact</h3>
+        <h3>Contact &amp; Feedback</h3>
+        <p>
+          I'm always open to suggestions and feedback! If you have ideas for improvements or run into any issues, please reach out.
+        </p>
         <p>
           <a href="mailto:peter@fwends.net">peter@fwends.net</a>
         </p>
