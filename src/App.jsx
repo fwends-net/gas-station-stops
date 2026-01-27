@@ -14,6 +14,7 @@ function App() {
   const [filteredStations, setFilteredStations] = useState(null);
   const [selectedStation, setSelectedStation] = useState(null);
   const [maxDetour, setMaxDetour] = useState(1);
+  const [queriedDetour, setQueriedDetour] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showAbout, setShowAbout] = useState(false);
@@ -33,6 +34,7 @@ function App() {
       const bounds = getRouteBounds(points, maxDetour + 0.5);
       const stations = await queryGasStations(bounds);
       setAllStations(stations);
+      setQueriedDetour(maxDetour);
 
       // Filter stations along route
       const filtered = filterStationsAlongRoute(stations, points, maxDetour);
@@ -45,13 +47,31 @@ function App() {
     }
   }, [maxDetour]);
 
-  const handleMaxDetourChange = useCallback((newMaxDetour) => {
+  const handleMaxDetourChange = useCallback(async (newMaxDetour) => {
     setMaxDetour(newMaxDetour);
-    if (allStations && routePoints) {
+    if (!routePoints) return;
+
+    // If new detour exceeds what we queried, fetch more stations
+    if (newMaxDetour > queriedDetour) {
+      setIsLoading(true);
+      try {
+        const bounds = getRouteBounds(routePoints, newMaxDetour + 0.5);
+        const stations = await queryGasStations(bounds);
+        setAllStations(stations);
+        setQueriedDetour(newMaxDetour);
+        const filtered = filterStationsAlongRoute(stations, routePoints, newMaxDetour);
+        setFilteredStations(filtered);
+      } catch (err) {
+        console.error('Error fetching stations:', err);
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    } else if (allStations) {
       const filtered = filterStationsAlongRoute(allStations, routePoints, newMaxDetour);
       setFilteredStations(filtered);
     }
-  }, [allStations, routePoints]);
+  }, [allStations, routePoints, queriedDetour]);
 
   const handleStationSelect = useCallback((station) => {
     setSelectedStation(station);
@@ -99,6 +119,7 @@ function App() {
                   setAllStations(null);
                   setFilteredStations(null);
                   setSelectedStation(null);
+                  setQueriedDetour(0);
                 }}
               >
                 Load New Route

@@ -140,6 +140,9 @@ export default function StationList({
                 <option value={1}>1 km</option>
                 <option value={1.5}>1.5 km</option>
                 <option value={2}>2 km</option>
+                <option value={10}>10 km</option>
+                <option value={20}>20 km</option>
+                <option value={40}>40 km</option>
               </select>
             </label>
           </div>
