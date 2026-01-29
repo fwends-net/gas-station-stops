@@ -41,6 +41,7 @@ export default function FileUpload({ onFileLoad, isLoading }) {
       onDragOver={handleDragOver}
     >
       <div className="upload-content">
+        <p className="upload-explanation">Upload a GPX file of your planned route to find refuelling opportunities along the way</p>
         <span className="upload-icon">📂</span>
         <p>Drag & drop a GPX file here</p>
         <p className="upload-or">or</p>

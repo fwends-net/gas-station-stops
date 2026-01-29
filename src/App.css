@@ -195,6 +195,12 @@ body {
   margin-bottom: 0.5rem;
 }
 
+.upload-explanation {
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem !important;
+  line-height: 1.5;
+}
+
 .upload-or {
   color: #999;
   font-size: 0.85rem;
