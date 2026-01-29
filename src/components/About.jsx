@@ -102,7 +102,7 @@ export default function About({ onClose }) {
       </section>
 
         <div className="about-footer">
-          <p>Version 1.0 · January 2026</p>
+          <p>Version 1.1 · January 2026</p>
         </div>
       </div>
     </div>
