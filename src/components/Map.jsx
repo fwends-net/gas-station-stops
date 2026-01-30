@@ -116,9 +116,18 @@ function FitBounds({ points }) {
   return null;
 }
 
+// Generate random coordinates on earth for initial view
+function getRandomLocation() {
+  const lat = Math.random() * 180 - 90; // -90 to 90
+  const lon = Math.random() * 360 - 180; // -180 to 180
+  return [lat, lon];
+}
+
+const randomDefaultCenter = getRandomLocation();
+
 export default function Map({ routePoints, stations, selectedStation, onStationSelect }) {
-  const defaultCenter = [39.5, 2.8]; // Mallorca as default
-  const defaultZoom = 10;
+  const defaultCenter = randomDefaultCenter;
+  const defaultZoom = 6; // Lower zoom for random location
 
   return (
     <MapContainer
